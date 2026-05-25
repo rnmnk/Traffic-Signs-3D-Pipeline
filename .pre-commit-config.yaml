@@ -1,0 +1,60 @@
+repos:
+  # Out of the box hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-illegal-windows-names
+      - id: check-json
+      - id: check-shebang-scripts-are-executable
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-yaml
+        exclude: (^.*/templates/)
+      - id: detect-private-key
+      - id: detect-aws-credentials
+        args: [ --allow-missing-credentials ]
+      - id: mixed-line-ending
+      - id: requirements-txt-fixer
+      - id: sort-simple-yaml
+      - id: trailing-whitespace
+
+  # Ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.1
+    hooks:
+      - id: ruff-check
+        name: ruff-unused-imports
+        args: [ --fix, --select=F401 ]
+      - id: ruff-check
+        args: [ --fix ]
+      - id: ruff-format
+
+  # Codespell
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        entry: codespell -i 3 -w
+
+  - repo: local
+    hooks:
+      # Check branch name
+      - id: branch-name
+        name: Check branch name (Linear)
+        entry: python3 scripts/pre-commit-hooks/check_branch_name.py
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+      # Check commit message
+      - id: commit-message
+        name: Check commit message format (Conventional + issue)
+        entry: python3 scripts/pre-commit-hooks/check_commit_message.py
+        language: system
+        pass_filenames: true
+        stages: [commit-msg]

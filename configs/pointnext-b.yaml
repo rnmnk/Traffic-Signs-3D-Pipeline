@@ -1,0 +1,37 @@
+experiment_name: pointnext_test              # used as the folder name under output_dir
+seed: 42
+output_dir: ./runs
+
+data:
+  root: ./synthetic_dataset
+  metadata_filename: metadata.json
+  clusters_subdir: clusters
+  num_points: 1024
+  augment: true
+  rotate_z: true
+  jitter_sigma: 0.01
+  num_workers: 4
+
+model:
+  name: pointnext
+  dropout: 0.5
+
+train:
+  epochs: 80
+  batch_size: 32
+  optimizer: { name: adamw, lr: 1.0e-3, weight_decay: 1.0e-4 }
+  scheduler: { name: cosine, min_lr: 1.0e-6 }
+  loss: bce
+  mixed_precision: false
+  grad_clip_norm: 1.0
+  early_stopping_patience: 10
+
+eval:
+  threshold: fixed_recall
+  target_recall: 0.95
+
+tracking:
+  tracking_uri: http://127.0.0.1:5000
+  experiment: mlflow_experiment_name
+  run_name: mlflow_run_name
+  log_model: true
